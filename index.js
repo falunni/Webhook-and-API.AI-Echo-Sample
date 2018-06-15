@@ -9,7 +9,7 @@ var soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\
 	"    <x:Header/>\n" +
 	"    <x:Body>\n" +
 	"        <urn:InformaPRElaborate>\n" +
-	"            <urn:Launch>true</urn:Launch>\n" +
+	"            <urn:Launch>false</urn:Launch>\n" +
 	"            <urn:StopASAP>false</urn:StopASAP>\n" +
 	"            <urn:General>false</urn:General>\n" +
 	"            <urn:Test>false</urn:Test>\n" +
