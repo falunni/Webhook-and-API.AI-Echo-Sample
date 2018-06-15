@@ -67,8 +67,8 @@ restService.post("/echo", function (req, res) {
 			: "Seems like some problem. Speak again.";
 	// write data to request body
 	console.log("Ciao!");
-	soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
-	soap_req.end();
+	//soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
+    //soap_req.end();
 	console.log("End");
 	return res.json({
 		speech: speech,
