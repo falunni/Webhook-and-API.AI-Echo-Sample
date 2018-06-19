@@ -12,7 +12,7 @@ function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 var soap_xml = "";
 
-function buildSoap(){
+function buildSoap(city,date){
 	soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
 		"    <x:Header/>\n" +
 		"    <x:Body>\n" +
@@ -67,21 +67,27 @@ restService.use(bodyParser.json());
 
 restService.post("/echo", function (req, res) {
 	var speech;
-	speech = req.body.result && req.body.result.parameters &&
-		req.body.result.parameters.echoText
-			? req.body.result.parameters.echoText
-			: "Seems like some problem. Speak again.";
 	// write data to request body
+	var city = req.body.result.parameters.city;
+	var date = req.body.result.parameters.date;
 	if(isNumber(req.body.result.parameters.arg1) && isNumber(req.body.result.parameters.arg2)){
 		var arg1 = req.body.result.parameters.arg1;
 		var arg2 = req.body.result.parameters.arg2;
 		speech = arg1 + arg2;
+		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
+	}else if(city != null && city !== "" && date != null && date !== ""){
+		buildSoap(city,date);
+		soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
+		soap_req.end();
+		speech = "Avviato il processo";
+	}else{
+		speech = req.body.result && req.body.result.parameters &&
+		req.body.result.parameters.echoText
+			? req.body.result.parameters.echoText
+			: "Seems like some problem. Speak again.";
 	}
 	console.log("Ciao!");
-	//soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
-	//soap_req.end();
 	console.log("End");
-	speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
 	return res.json({
 		speech: speech,
 		displayText: speech,
