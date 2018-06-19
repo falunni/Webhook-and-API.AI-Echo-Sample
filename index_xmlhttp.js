@@ -33,14 +33,14 @@ function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 function buildSoap(city,date){
 	soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
-		"    <x:Header/>\n" +
-		"    <x:Body>\n" +
-		"        <urn:Meteo>\n" +
-		"            <urn:City>"+city+"</urn:City>\n" +
-		"            <urn:Date>"+date+"</urn:Date>\n" +
-		"        </urn:Meteo>\n" +
-		"    </x:Body>\n" +
-		"</x:Envelope>";
+				"    <x:Header/>\n" +
+				"    <x:Body>\n" +
+				"        <urn:Meteo>\n" +
+				"            <urn:City>"+city+"</urn:City>\n" +
+				"            <urn:Date>"+date+"</urn:Date>\n" +
+				"        </urn:Meteo>\n" +
+				"    </x:Body>\n" +
+				"</x:Envelope>";
 
 	http_options = {
 		hostname: 'ec2-35-178-154-161.eu-west-2.compute.amazonaws.com',
