@@ -31,7 +31,7 @@ var http_options = {
 	path: '/ws/Meteo',
 	method: 'POST',
 	headers: {
-		'Authorization': "Basic " + new Buffer("admin" + ":" + "admin1").toString("base64"),
+		'Authorization': "Basic " + new Buffer("admin" + ":" + "admin").toString("base64"),
 		'Content-Type': 'text/xml; charset=utf-8',
 		'SOAPAction': '',
 		'Content-Length': soap_xml.length
