@@ -8,24 +8,30 @@ var request = require('request');
 var city = "";
 var date = "";
 
-var soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
-	"    <x:Header/>\n" +
-	"    <x:Body>\n" +
-	"        <urn:Meteo>\n" +
-	"            <urn:City>"+city+"</urn:City>\n" +
-	"            <urn:Date>"+date+"</urn:Date>\n" +
-	"        </urn:Meteo>\n" +
-	"    </x:Body>\n" +
-	"</x:Envelope>";
+function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
+var soap_xml;
+
+function buildSoap(){
+	soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
+		"    <x:Header/>\n" +
+		"    <x:Body>\n" +
+		"        <urn:Meteo>\n" +
+		"            <urn:City>"+city+"</urn:City>\n" +
+		"            <urn:Date>"+date+"</urn:Date>\n" +
+		"        </urn:Meteo>\n" +
+		"    </x:Body>\n" +
+		"</x:Envelope>";
+}
 
 var http = require('http');
 var http_options = {
-	hostname: 'ITEM-S37981',
+	hostname: 'ec2-35-178-154-161.eu-west-2.compute.amazonaws.com',
 	port: 8181,
 	path: '/ws/Meteo',
 	method: 'POST',
 	headers: {
-		'Authorization': "Basic " + new Buffer("dsantoro" + ":" + "Assago.01").toString("base64"),
+		'Authorization': "Basic " + new Buffer("admin" + ":" + "admin1").toString("base64"),
 		'Content-Type': 'text/xml; charset=utf-8',
 		'SOAPAction': '',
 		'Content-Length': soap_xml.length
@@ -67,14 +73,20 @@ restService.post("/echo", function (req, res) {
 			? req.body.result.parameters.echoText
 			: "Seems like some problem. Speak again.";
 	// write data to request body
+	if(isNumber(req.body.result.parameters.arg1) && isNumber(req.body.result.parameters.arg2)){
+		var arg1 = req.body.result.parameters.arg1;
+		var arg2 = req.body.result.parameters.arg2;
+		speech = arg1 + arg2;
+	}
 	console.log("Ciao!");
 	//soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
 	//soap_req.end();
 	console.log("End");
+	speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
 	return res.json({
 		speech: speech,
 		displayText: speech,
-		source: "webhook-echo-sample"
+		source: "webhook-echo-sample";
 	});
 });
 
