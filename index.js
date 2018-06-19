@@ -79,7 +79,7 @@ restService.post("/echo", function (req, res) {
 		buildSoap(city,date);
 		soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
 		soap_req.end();
-		speech = "Avviato il processo";
+		speech = "Avviato il processo per controllare il meteo";
 	}else{
 		speech = req.body.result && req.body.result.parameters &&
 		req.body.result.parameters.echoText
