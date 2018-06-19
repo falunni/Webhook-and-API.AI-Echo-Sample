@@ -10,7 +10,7 @@ var date = "";
 
 function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
-var soap_xml;
+var soap_xml = "";
 
 function buildSoap(){
 	soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
