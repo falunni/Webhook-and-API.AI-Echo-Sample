@@ -78,7 +78,6 @@ restService.post("/echo", function (req, res) {
 	}else if(city != null && city !== "" && date != null && date !== ""){
 		buildSoap(city,date);
 		soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
-		soap_req.end();
 		speech = "Avviato il processo per controllare il meteo";
 	}else{
 		speech = req.body.result && req.body.result.parameters &&
@@ -88,6 +87,7 @@ restService.post("/echo", function (req, res) {
 	}
 	console.log("Ciao!");
 	console.log("End");
+	soap_req.end();
 	return res.json({
 		speech: speech,
 		displayText: speech,
