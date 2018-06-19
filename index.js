@@ -5,15 +5,16 @@ const bodyParser = require("body-parser");
 
 var request = require('request');
 
-var soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:informaprelaborate\">\n" +
+var city = "";
+var date = "";
+
+var soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
 	"    <x:Header/>\n" +
 	"    <x:Body>\n" +
-	"        <urn:InformaPRElaborate>\n" +
-	"            <urn:Launch>true</urn:Launch>\n" +
-	"            <urn:StopASAP>false</urn:StopASAP>\n" +
-	"            <urn:General>false</urn:General>\n" +
-	"            <urn:Test>false</urn:Test>\n" +
-	"        </urn:InformaPRElaborate>\n" +
+	"        <urn:Meteo>\n" +
+	"            <urn:City>"+city+"</urn:City>\n" +
+	"            <urn:Date>"+date+"</urn:Date>\n" +
+	"        </urn:Meteo>\n" +
 	"    </x:Body>\n" +
 	"</x:Envelope>";
 
@@ -21,7 +22,7 @@ var http = require('http');
 var http_options = {
 	hostname: 'ITEM-S37981',
 	port: 8181,
-	path: '/ws/InformaPRElaborate',
+	path: '/ws/Meteo',
 	method: 'POST',
 	headers: {
 		'Authorization': "Basic " + new Buffer("dsantoro" + ":" + "Assago.01").toString("base64"),
@@ -67,8 +68,8 @@ restService.post("/echo", function (req, res) {
 			: "Seems like some problem. Speak again.";
 	// write data to request body
 	console.log("Ciao!");
-	soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
-	soap_req.end();
+	//soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
+	//soap_req.end();
 	console.log("End");
 	return res.json({
 		speech: speech,
