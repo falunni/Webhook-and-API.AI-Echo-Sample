@@ -6,7 +6,6 @@
  "scripts": {
   "start": "node index.js"
  },
- // Test
  "author": "Sunil Syal",
  "dependencies": {
   "body-parser": "^1.15.0",
