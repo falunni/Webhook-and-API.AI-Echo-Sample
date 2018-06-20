@@ -29,6 +29,28 @@ function makeRequest(){
 	xmlhttp.send(soap_xml);
 }
 
+var soap_req;
+
+function makeAsyncRequest(){
+	soap_req = http.request(http_options, (res) => {
+		console.log(`STATUS: ${res.statusCode}`);
+		console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+		res.setEncoding('utf8');
+		res.on('data', (chunk) => {
+			console.log(`BODY: ${chunk}`);
+		});
+
+		res.on('end', () => {
+			console.log('No more data in response.')
+		})
+	});
+
+	soap_req.on('error', (e) => {
+		console.log(`problem with request: ${e.message}`);
+	});
+
+}
+
 function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 function buildSoap(city,date){
@@ -56,22 +78,6 @@ function buildSoap(city,date){
 	}
 }
 
-var soap_req = http.request(http_options, (res) => {
-	console.log(`STATUS: ${res.statusCode}`);
-	console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-	res.setEncoding('utf8');
-	res.on('data', (chunk) => {
-		console.log(`BODY: ${chunk}`);
-	});
-
-	res.on('end', () => {
-		console.log('No more data in response.')
-	})
-});
-
-soap_req.on('error', (e) => {
-	console.log(`problem with request: ${e.message}`);
-});
 
 const restService = express();
 
@@ -95,7 +101,10 @@ restService.post("/echo", function (req, res) {
 		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
 	}else if(city != null && city !== "" && date != null && date !== ""){
 		buildSoap(city,date);
-		makeRequest();
+		//makeRequest();
+		makeAsyncRequest();
+		soap_req.write(soap_xml);
+		soap_req.end();
 		speech = "Avviato il processo per controllare il meteo";
 	}else{
 		speech = req.body.result && req.body.result.parameters &&
