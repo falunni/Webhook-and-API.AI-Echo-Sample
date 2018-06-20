@@ -97,8 +97,8 @@ restService.post("/echo", function (req, res) {
 	if(isNumber(req.body.result.parameters.arg1) && isNumber(req.body.result.parameters.arg2)){
 		var arg1 = req.body.result.parameters.arg1;
 		var arg2 = req.body.result.parameters.arg2;
-		speech = arg1 + arg2;
-		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
+		speech = parseInt(arg1) + parseInt(arg2);
+		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech.toString();
 	}else if(city != null && city !== "" && date != null && date !== ""){
 		buildSoap(city,date);
 		//makeRequest(); // Test
