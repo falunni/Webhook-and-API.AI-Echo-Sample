@@ -94,13 +94,13 @@ restService.post("/SSG_APP", function (req, res) {
 	// write data to request body
     var intentName = req.body.result.parameters.intentName;
     switch(intentName) {
-        case "Somma":
+        case "somma":
             var arg1 = req.body.result.parameters.arg1;
             var arg2 = req.body.result.parameters.arg2;
             speech = parseInt(arg1) + parseInt(arg2);
             speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech.toString();
             break;
-        case "Meteo":
+        case "bp_process_meteo":
             var city = req.body.result.parameters.city;
             var date = req.body.result.parameters.date;
             buildSoap(city,date);
