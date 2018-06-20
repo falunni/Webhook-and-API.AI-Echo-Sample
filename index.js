@@ -101,7 +101,7 @@ restService.post("/echo", function (req, res) {
 		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
 	}else if(city != null && city !== "" && date != null && date !== ""){
 		buildSoap(city,date);
-		//makeRequest();
+		//makeRequest(); // Test
 		makeAsyncRequest();
 		soap_req.write(soap_xml);
 		soap_req.end();
