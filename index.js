@@ -95,8 +95,10 @@ restService.post("/SSG_APP", function (req, res) {
     var intentName = req.body.result.parameters.intentName;
     switch(intentName) {
         case "Somma":
-            var arg1 = req.body.result.parameters.arg1;
-            var arg2 = req.body.result.parameters.arg2;
+            var arg1 = req.body.result.parameters.arg1;
+            var arg2 = req.body.result.parameters.arg2;
+            speech = parseInt(arg1) + parseInt(arg2);
+            speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech.toString();
             break;
         case "Meteo":
             var city = req.body.result.parameters.city;
