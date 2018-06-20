@@ -89,7 +89,7 @@ restService.use(
 
 restService.use(bodyParser.json());
 
-restService.post("/echo", function (req, res) {
+restService.post("/SSG_APP", function (req, res) {
 	var speech;
 	// write data to request body
 	var city = req.body.result.parameters.city;
