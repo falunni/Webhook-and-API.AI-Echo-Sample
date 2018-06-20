@@ -92,26 +92,30 @@ restService.use(bodyParser.json());
 restService.post("/SSG_APP", function (req, res) {
 	var speech;
 	// write data to request body
-	var city = req.body.result.parameters.city;
-	var date = req.body.result.parameters.date;
-	if(isNumber(req.body.result.parameters.arg1) && isNumber(req.body.result.parameters.arg2)){
-		var arg1 = req.body.result.parameters.arg1;
-		var arg2 = req.body.result.parameters.arg2;
-		speech = arg1 + arg2;
-		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
-	}else if(city != null && city !== "" && date != null && date !== ""){
-		buildSoap(city,date);
-		//makeRequest(); // Test
-		makeAsyncRequest();
-		soap_req.write(soap_xml);
-		soap_req.end();
-		speech = "Avviato il processo per controllare il meteo";
-	}else{
-		speech = req.body.result && req.body.result.parameters &&
-		req.body.result.parameters.echoText
-			? req.body.result.parameters.echoText
-			: "Seems like some problem. Speak again.";
-	}
+    var intentName = req.body.result.parameters.intentName;
+    switch(intentName) {
+        case "Somma":
+            var arg1 = req.body.result.parameters.arg1;
+            var arg2 = req.body.result.parameters.arg2;
+            break;
+        case "Meteo":
+            var city = req.body.result.parameters.city;
+            var date = req.body.result.parameters.date;
+            buildSoap(city,date);
+            //makeRequest(); // Test
+            makeAsyncRequest();
+            soap_req.write(soap_xml);
+            soap_req.end();
+            speech = "Avviato il processo per controllare il meteo";
+            break;
+        default:
+            speech = req.body.result && req.body.result.parameters &&
+            req.body.result.parameters.echoText
+                ? req.body.result.parameters.echoText
+                : "Seems like some problem. Speak again.";
+            break;
+    }
+
 	console.log("Ciao!");
 	console.log("End");
 	return res.json({
