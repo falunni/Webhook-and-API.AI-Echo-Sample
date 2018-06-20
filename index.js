@@ -3,50 +3,81 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-var request = require('request');
-
-var soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:informaprelaborate\">\n" +
-	"    <x:Header/>\n" +
-	"    <x:Body>\n" +
-	"        <urn:InformaPRElaborate>\n" +
-	"            <urn:Launch>true</urn:Launch>\n" +
-	"            <urn:StopASAP>false</urn:StopASAP>\n" +
-	"            <urn:General>false</urn:General>\n" +
-	"            <urn:Test>false</urn:Test>\n" +
-	"        </urn:InformaPRElaborate>\n" +
-	"    </x:Body>\n" +
-	"</x:Envelope>";
-
 var http = require('http');
-var http_options = {
-	hostname: 'ITEM-S37981',
-	port: 8181,
-	path: '/ws/InformaPRElaborate',
-	method: 'POST',
-	headers: {
-		'Authorization': "Basic " + new Buffer("dsantoro" + ":" + "Assago.01").toString("base64"),
-		'Content-Type': 'text/xml; charset=utf-8',
-		'SOAPAction': '',
-		'Content-Length': soap_xml.length
+var request = require('request');
+var city = "";
+var date = "";
+var soap_xml = "";
+var http_options = {}
+
+function makeRequest(){
+	var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+	var xmlhttp = new XMLHttpRequest();
+	var url = "http://ec2-35-178-154-161.eu-west-2.compute.amazonaws.com:8181/ws/Meteo";
+	xmlhttp.open('POST',url, true);
+//Send the proper header information along with the request
+	xmlhttp.setRequestHeader('Content-type', 'text/xml; charset=utf-8');
+	xmlhttp.setRequestHeader('Authorization',"Basic " + new Buffer("admin" + ":" + "admin").toString("base64"));
+	xmlhttp.setRequestHeader('SOAPAction','');
+	//xmlhttp.setData("text/xml", soap_xml);
+
+	xmlhttp.onreadystatechange = function() {//Call a function when the state changes.
+		if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			alert(xmlhttp.responseText);
+		}
+	}
+	xmlhttp.send(soap_xml);
+}
+
+var soap_req;
+
+function makeAsyncRequest(){
+	soap_req = http.request(http_options, (res) => {
+		console.log(`STATUS: ${res.statusCode}`);
+		console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+		res.setEncoding('utf8');
+		res.on('data', (chunk) => {
+			console.log(`BODY: ${chunk}`);
+		});
+
+		res.on('end', () => {
+			console.log('No more data in response.')
+		})
+	});
+
+	soap_req.on('error', (e) => {
+		console.log(`problem with request: ${e.message}`);
+	});
+
+}
+
+function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
+function buildSoap(city,date){
+	soap_xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:blueprism:webservice:Meteo\">\n" +
+		"    <x:Header/>\n" +
+		"    <x:Body>\n" +
+		"        <urn:Meteo>\n" +
+		"            <urn:City>"+city+"</urn:City>\n" +
+		"            <urn:Date>"+date+"</urn:Date>\n" +
+		"        </urn:Meteo>\n" +
+		"    </x:Body>\n" +
+		"</x:Envelope>";
+
+	http_options = {
+		hostname: 'ec2-35-178-154-161.eu-west-2.compute.amazonaws.com',
+		port: 8181,
+		path: '/ws/Meteo',
+		method: 'POST',
+		headers: {
+			'Authorization': "Basic " + new Buffer("admin" + ":" + "admin").toString("base64"),
+			'Content-Type': 'text/xml',
+			'SOAPAction': '',
+			'Content-Length': soap_xml.length
+		}
 	}
 }
 
-var soap_req = http.request(http_options, (res) => {
-	console.log(`STATUS: ${res.statusCode}`);
-	console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-	res.setEncoding('utf8');
-	res.on('data', (chunk) => {
-		console.log(`BODY: ${chunk}`);
-	});
-
-	res.on('end', () => {
-		console.log('No more data in response.')
-	})
-});
-
-soap_req.on('error', (e) => {
-	console.log(`problem with request: ${e.message}`);
-});
 
 const restService = express();
 
@@ -59,16 +90,29 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/echo", function (req, res) {
-	var speech =
-		req.body.result &&
-		req.body.result.parameters &&
+	var speech;
+	// write data to request body
+	var city = req.body.result.parameters.city;
+	var date = req.body.result.parameters.date;
+	if(isNumber(req.body.result.parameters.arg1) && isNumber(req.body.result.parameters.arg2)){
+		var arg1 = req.body.result.parameters.arg1;
+		var arg2 = req.body.result.parameters.arg2;
+		speech = arg1 + arg2;
+		speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech;
+	}else if(city != null && city !== "" && date != null && date !== ""){
+		buildSoap(city,date);
+		//makeRequest();
+		makeAsyncRequest();
+		soap_req.write(soap_xml);
+		soap_req.end();
+		speech = "Avviato il processo per controllare il meteo";
+	}else{
+		speech = req.body.result && req.body.result.parameters &&
 		req.body.result.parameters.echoText
 			? req.body.result.parameters.echoText
 			: "Seems like some problem. Speak again.";
-	// write data to request body
+	}
 	console.log("Ciao!");
-	//soap_req.write(soap_xml); // xml would have been set somewhere to a complete xml document in the form of a string
-    //soap_req.end();
 	console.log("End");
 	return res.json({
 		speech: speech,
