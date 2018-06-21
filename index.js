@@ -121,6 +121,37 @@ restService.post("/echo", function (req, res) {
 	});
 });
 
+restService.post("/echoV2", function (req, res) {
+	var response;
+	// write data to request body
+	var city = req.body.queryResult.parameters.city;
+	var date = req.body.queryResult.parameters.date;
+	if(isNumber(req.body.queryResult.parameters.arg1) && isNumber(req.body.queryResult.parameters.arg2)){
+		var arg1 = req.body.queryResult.parameters.arg1;
+		var arg2 = req.body.queryResult.parameters.arg2;
+		response = parseInt(arg1) + parseInt(arg2);
+		response = "La somma di "+arg1+" e "+arg2+" è ugaule a "+response.toString();
+	}else if(city != null && city !== "" && date != null && date !== ""){
+		buildSoap(city,date);
+		//makeRequest(); // Test
+		makeAsyncRequest();
+		soap_req.write(soap_xml);
+		soap_req.end();
+		response = "Avviato il processo per controllare il meteo";
+	}else{
+		response = req.body.queryResult && req.body.queryResult.parameters &&
+		req.body.queryResult.parameters.echoText
+			? req.body.queryResult.parameters.echoText
+			: "Seems like some problem. Speak again.";
+	}
+	console.log("Ciao!");
+	console.log("End");
+	return res.json({
+		fulfillmentText: response,
+		source: "webhook-echo-sample"
+	});
+});
+
 restService.post("/audio", function (req, res) {
 	var speech = "";
 	switch (req.body.result.parameters.AudioSample.toLowerCase()) {
