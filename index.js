@@ -147,8 +147,7 @@ restService.post("/echoV2", function (req, res) {
 	console.log("Ciao!");
 	console.log("End");
 	return res.json({
-		fulfillmentText: response,
-		source: "webhook-echo-sample"
+		fulfillmentText: response
 	});
 });
 
