@@ -89,34 +89,35 @@ restService.use(
 
 restService.use(bodyParser.json());
 
-restService.post("/SSG_APP", function (req, res) {
+
+restService.post("/SSG_APP_V1", function (req, res) {
 	var speech;
 	// write data to request body
-    var intentName = req.body.result.parameters.intentName;
-    switch(intentName) {
-        case "somma":
-            var arg1 = req.body.result.parameters.arg1;
-            var arg2 = req.body.result.parameters.arg2;
-            speech = parseInt(arg1) + parseInt(arg2);
-            speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech.toString();
-            break;
-        case "bp_process_meteo":
-            var city = req.body.result.parameters.city;
-            var date = req.body.result.parameters.date;
-            buildSoap(city,date);
-            //makeRequest(); // Test
-            makeAsyncRequest();
-            soap_req.write(soap_xml);
-            soap_req.end();
-            speech = "Avviato il processo per controllare il meteo";
-            break;
-        default:
-            speech = req.body.result && req.body.result.parameters &&
-            req.body.result.parameters.echoText
-                ? req.body.result.parameters.echoText
-                : "Seems like some problem. Speak again.";
-            break;
-    }
+	var intentName = req.body.result.parameters.intentName;
+	switch(intentName) {
+		case "somma":
+			var arg1 = req.body.result.parameters.arg1;
+			var arg2 = req.body.result.parameters.arg2;
+			speech = parseInt(arg1) + parseInt(arg2);
+			speech = "La somma di "+arg1+" e "+arg2+" è ugaule a "+speech.toString();
+			break;
+		case "bp_process_meteo":
+			var city = req.body.result.parameters.city;
+			var date = req.body.result.parameters.date;
+			buildSoap(city,date);
+			//makeRequest(); // Test
+			makeAsyncRequest();
+			soap_req.write(soap_xml);
+			soap_req.end();
+			speech = "Avviato il processo per controllare il meteo";
+			break;
+		default:
+			speech = req.body.result && req.body.result.parameters &&
+			req.body.result.parameters.echoText
+				? req.body.result.parameters.echoText
+				: "Seems like some problem. Speak again.";
+			break;
+	}
 
 	console.log("Ciao!");
 	console.log("End");
@@ -127,6 +128,48 @@ restService.post("/SSG_APP", function (req, res) {
 	});
 });
 
+restService.post("/SSG_APP_V2", function (req, res) {
+	var response;
+	// write data to request body
+	var intentName = req.body.queryResult.parameters.intentName;
+	switch(intentName) {
+		case "somma":
+			var arg1 = req.body.queryResult.parameters.arg1;
+			var arg2 = req.body.queryResult.parameters.arg2;
+			response = parseInt(arg1) + parseInt(arg2);
+			response = "La somma di "+arg1+" e "+arg2+" è ugaule a "+response.toString();
+			break;
+		case "bp_process_meteo":
+			var city = req.body.queryResult.parameters.city;
+			var date = req.body.queryResult.parameters.date;
+			buildSoap(city,date);
+			//makeRequest(); // Test
+			makeAsyncRequest();
+			soap_req.write(soap_xml);
+			soap_req.end();
+			response = "Avviato il processo per controllare il meteo";
+			break;
+		default:
+			response = req.body.queryResult && req.body.queryResult.parameters &&
+			req.body.queryResult.parameters.echoText
+				? req.body.queryResult.parameters.echoText
+				: "Seems like some problem. Speak again.";
+			break;
+	}
+
+	console.log("Ciao!");
+	console.log("End");
+	return res.json({
+		fulfillmentText: response
+	});
+});
+
+restService.listen(process.env.PORT || 8000, function () {
+	console.log("Server up and listening");
+});
+
+
+/*
 restService.post("/audio", function (req, res) {
 	var speech = "";
 	switch (req.body.result.parameters.AudioSample.toLowerCase()) {
@@ -294,7 +337,4 @@ restService.post("/slack-test", function (req, res) {
 		}
 	});
 });
-
-restService.listen(process.env.PORT || 8000, function () {
-	console.log("Server up and listening");
-});
+* */
